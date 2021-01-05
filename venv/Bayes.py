@@ -2,14 +2,15 @@ import os
 from os import listdir
 from os.path import isfile, join
 import string
+from collections import Counter
 
+my_path = 'C:\\Users\\georg\\OneDrive - aueb.gr\\artificial_intelligence\\assignment_2\\aclImdb\\train'
 
-my_path = 'C:\\Users\\georg\\OneDrive - aueb.gr\\artificial_intelligence\\assignment_2\\aclImdb\\train\\pos'
+stopWordsFile = open('stop_words.txt')
+stopWords = set(stopWordsFile.readlines())
 
-
-def read(my_file):
-    reader = open(my_file, 'r')
-    word = str(reader.readlines())
+def clean(word):
+    word = word.lower()
     word = word.replace('\n', '')
     word = word.replace('.', '')
     word = word.replace(',', '')
@@ -18,29 +19,39 @@ def read(my_file):
     word = word.replace('*', '')
     word = word.replace('!', '')
     word = word.replace('/', '')
-    arr  = word.split()
-    print(arr)
-    reader.close()
+    word = word.replace('(', '')
+    word = word.replace(')', '')
+    word = word.replace('-', '')
+    word = word.replace('&', '')
+    word = word.replace('<br />','')
+    word = word.replace('//>','')
+    word = word.replace('/>','')
+    word = word.replace('<br','')
+    word = word.replace('/><br','')
+    word = word.replace('<','')
+    word = word.replace('>','')
+    word = word.replace('<br>','')
+    word = word.replace('<br >','')
+    word = word.replace('\\', '')
+    word = [w for w in word if w not in stopWords]
+    return word
+
+def read_common(choice):
+    count = Counter()
+    arr = []
+    path = my_path + '\\' + choice
+    for filename in os.listdir(path):
+        with open(os.path.sep.join([path, filename]), encoding="utf8") as f:
+            for line in f.readlines():
+                line = clean(line)
+                line = line.strip()
+                # count all words in line
+                count.update(line.split())
+    arr = count.most_common(500)
 
 
 
-
-def read_all_files():
-    onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
-
-    for file in onlyfiles:
-        read(file)
-
-# def read():
-#     new_list = []
-#     for root, dirs, files in os.walk(my_path):
-#         for file in files:
-#             if file.endswith('.txt')
-#                 with open(os.path.join(root, file), 'r') as f:
-#                     text = f.read()
-#                     new_list.append(text)
-#
 
 
 if __name__ == '__main__':
-     read_all_files()
+    read_common()
