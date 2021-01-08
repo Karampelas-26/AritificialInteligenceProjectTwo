@@ -1,4 +1,5 @@
 import os
+from numpy import log2 as log
 
 my_path = 'C:\\Users\\georg\\OneDrive - aueb.gr\\artificial_intelligence\\assignment_2\\aclImdb'
 
@@ -68,6 +69,21 @@ def train(myfile):
     dictionary["fileCount"] = fileCount
     return dictionary
 
+# def test(myfile):
+#     path = my_path + '\\train\\' + str(myfile)
+#     review_words = set()
+#
+#
+#     for filename in os.listdir(path):
+#         with open(os.path.sep.join([path, filename]), encoding="utf8") as f:
+#             text = f.read()
+#             text = clean(text)
+#
+
+
+
+def entropy(node):
+    ent =
 class ID3Tree:
     def create_tree(self, pos_dict, neg_dict):
         root = Node(None, 0, 0)
@@ -76,7 +92,7 @@ class ID3Tree:
         if (node.left == None):
             node.left = value
         else:
-                node.right = value
+            node.right = value
 
 
 if __name__ == '__main__':
