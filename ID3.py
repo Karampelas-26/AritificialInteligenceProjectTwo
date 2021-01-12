@@ -1,6 +1,6 @@
 import os
 
-my_path = 'C:\\Users\\georg\\OneDrive - aueb.gr\\artificial_intelligence\\assignment_2\\aclImdb'
+my_path = 'C:\\Users\plaisio\\downloads\\aclImdb'
 
 class Node:
     def __init__(self, value, pos_sum, neg_sum):
@@ -66,6 +66,24 @@ def train(myfile):
         if (dictionary[word] < 50):
             dictionary.pop(word)
     dictionary["fileCount"] = fileCount
+    
+    for word in dictionary.keys():
+        dictionary[word]=0
+
+    for filename in os.listdir(path): #for gia na exei mesa to dictionary
+                                        # poses fores emfanizetai sta arxeia
+                                        #i kathe leksi
+        with open(os.path.sep.join([path, filename]), encoding="utf8") as f:
+            text = f.read()
+            text = clean(text)
+            counted_words = set() #gia kathe arxeio blepoume poies lekseis exoume idi dei
+            for word in text:
+                if word in dictionary:
+                    if word not in counted_words:
+                        dictionary[word] += 1
+                    else:
+                        counted_words.add(word)
+
     return dictionary
 
 class ID3Tree:
@@ -80,5 +98,5 @@ class ID3Tree:
 
 
 if __name__ == '__main__':
-    train("pos")
-    train("neg")
+    pos_dictionary = train("pos")
+    #neg_dictionary = train("neg")
