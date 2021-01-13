@@ -1,7 +1,7 @@
 import os
-from numpy import log2 as log
+from numpy import log1p as log
 
-my_path = 'C:\\Users\plaisio\\downloads\\aclImdb'
+my_path = 'C:\\Users\\georg\OneDrive - aueb.gr\\artificial_intelligence\\assignment_2\\aclImdb'
 
 class Node:
     def __init__(self, value, pos_sum, neg_sum):
@@ -63,13 +63,11 @@ def train(myfile):
                     dictionary[word] = 1
 
     fileCount = len(os.listdir(path))
-    for word in list(dictionary.keys()):
-        if (dictionary[word] < 50):
-            dictionary.pop(word)
-    dictionary["fileCount"] = fileCount
-    
+
     for word in dictionary.keys():
         dictionary[word]=0
+
+    dictionary["fileCount"] = fileCount
 
     for filename in os.listdir(path): #for gia na exei mesa to dictionary
                                         # poses fores emfanizetai sta arxeia
@@ -85,6 +83,13 @@ def train(myfile):
                     else:
                         counted_words.add(word)
 
+    for word in list(dictionary.keys()):
+        if (dictionary[word] < 1000): #100ari camel 8ew mouni
+            dictionary.pop(word)
+
+    # for k, v in dictionary.items():
+    #     print(k+ " "+str(v))
+    # print(len(dictionary))
     return dictionary
 
 # def test(myfile):
@@ -101,7 +106,31 @@ def train(myfile):
 
 
 def entropy(node):
-    ent =
+        propability_pos = propability_neg = propability_log_pos = propability_log_neg = 0.0
+
+        if node.value in pos_dictionary:
+            propability_pos = pos_dictionary[node.value] / node.neg_sum+node.pos_sum
+        else:
+            propability_pos = 1 / 25000^2
+
+        if node.value in neg_dictionary:
+            propability_neg = neg_dictionary[node.value] / node.neg_sum+node.pos_sum
+        else:
+            propability_neg = 1 / 25000^2
+
+        propability_log_pos = log(propability_pos)
+        propability_log_neg = log(propability_neg)
+
+        return -propability_pos*propability_log_pos - propability_neg*propability_log_neg
+
+def informationGain():
+
+
+
+
+    return
+
+
 class ID3Tree:
     def create_tree(self, pos_dict, neg_dict):
         root = Node(None, 0, 0)
@@ -115,4 +144,6 @@ class ID3Tree:
 
 if __name__ == '__main__':
     pos_dictionary = train("pos")
-    #neg_dictionary = train("neg")
+    neg_dictionary = train("neg")
+
+
