@@ -13,6 +13,8 @@ class Node:
         self.left = None
 
 
+
+
 def stop_words_to_list():
     lst = []
     with open('stop_words.txt', "r") as file:
@@ -121,29 +123,74 @@ def entropy(node):
         propability_log_pos = log(propability_pos)
         propability_log_neg = log(propability_neg)
 
+
+
         return -propability_pos*propability_log_pos - propability_neg*propability_log_neg
 
-def informationGain():
+def informationGain(node):
+
+    InfoGain = 0.0
+
+    entropia = entropy(node)
+
+    InfoGain += 1 -( (node.pos_sum + node.neg_sum)/25000  * entropia +((12500 -node.pos_sum) + (12500 -node.neg_sum)/25000) *(1-entropia) )
 
 
+    return InfoGain
 
 
-    return
-
-
-class ID3Tree:
-    def create_tree(self, pos_dict, neg_dict):
+class ID3Tree: #/// thelei doyleia edw...///#
+    def create_tree(self, pos_dict, neg_dict, all_dic, d):
         root = Node(None, 0, 0)
+        node = Node(neg, pos)
+        if len(all_dic) == 0:
+            node.result = 1 if len(pos) < len(neg) else -1
+            return node
+        elif len(pos) == 0 and len(neg) == 0:
+            node.result = d
+            return node
+        elif len(pos) == 0:
+            node.result = 1
+            return node
+        elif len(neg) == 0:
+            node.result = -1
+            return node
+
+        node.word = word
+        return node
 
     def addNode(self, node, value):
         if (node.left == None):
             node.left = value
+            return node
         else:
             node.right = value
+            return node
+
+
+def Classify(text):
+    currentNode = root
+    result = None
+    while currentNode.word is not None:
+        result = currentNode.result
+        if currentNode.word in text:
+            currentNode = currentNode.true
+        else:
+            currentNode = currentNode.false
+    return result
 
 
 if __name__ == '__main__':
     pos_dictionary = train("pos")
     neg_dictionary = train("neg")
+    all_dic = set()
+    for key in pos_dictionary.keys() :
+        all_dic.add(key)
+    for kei in neg_dictionary.keys():
+        all_dic.add(key)
+
+    root = None
+
+
 
 
