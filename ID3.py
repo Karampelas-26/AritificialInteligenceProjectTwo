@@ -4,14 +4,14 @@ from numpy import log1p as log
 my_path = 'C:\\Users\\georg\OneDrive - aueb.gr\\artificial_intelligence\\assignment_2\\aclImdb'
 
 class Node:
-    def __init__(self, value, pos_sum, neg_sum):
-        self.value = value
+    def __init__(self, pos_sum, neg_sum):
+        self.value = None
         self.pos_sum = pos_sum
         self.neg_sum = neg_sum
         self.total_percentage = None
         self.right = None
         self.left = None
-
+        self.result = None
 
 
 
@@ -107,16 +107,16 @@ def train(myfile):
 
 
 
-def entropy(node):
+def entropy(word, pos_dict, neg_dict):
         propability_pos = propability_neg = propability_log_pos = propability_log_neg = 0.0
 
-        if node.value in pos_dictionary:
-            propability_pos = pos_dictionary[node.value] / node.neg_sum+node.pos_sum
+        if word in pos_dictionary:
+            propability_pos = pos_dictionary[word] / neg_dict[word]+pos_dict[word]
         else:
             propability_pos = 1 / 25000^2
 
-        if node.value in neg_dictionary:
-            propability_neg = neg_dictionary[node.value] / node.neg_sum+node.pos_sum
+        if word in neg_dictionary:
+            propability_neg = neg_dictionary[word] / neg_dict[word]+pos_dict[word]
         else:
             propability_neg = 1 / 25000^2
 
@@ -127,37 +127,68 @@ def entropy(node):
 
         return -propability_pos*propability_log_pos - propability_neg*propability_log_neg
 
-def informationGain(node):
+def informationGain(word, pos_dict, neg_dict): # legit douleuei
 
-    InfoGain = 0.0
+    infoGain = 0.0
 
-    entropia = entropy(node)
+    entropia = entropy(word, pos_dict, neg_dict)
 
-    InfoGain += 1 -( (node.pos_sum + node.neg_sum)/25000  * entropia +((12500 -node.pos_sum) + (12500 -node.neg_sum)/25000) *(1-entropia) )
+    infoGain += 1 -( (neg_dict[word]+pos_dict[word])/25000  * entropia +((12500 -pos_dict[word]) + (12500 -neg_dict[word])/25000) *(1-entropia) )
+
+    return infoGain
 
 
-    return InfoGain
+
+# class ID3Tree: #/// thelei doyleia edw...///#
+#     def create_tree(self, pos_dict, neg_dict, all_dict, d):
+#         root = Node(None, 0, 0)
+#         node = Node(word, neg, pos)
+#         if len(all_dict) == 0:
+#             node.result = 1 if len(pos) < len(neg) else -1
+#             return node
+#         elif len(pos) == 0 and len(neg) == 0:
+#             node.result = d
+#             return node
+#         elif len(pos) == 0:
+#             node.result = 1
+#             return node
+#         elif len(neg) == 0:
+#        yy6666666     node.result = -1
+#             return node
+#
+#         node.word = word
+#         if (word exists):
+#             node.right = ID3Tree()
+#         else:
+#             node.left = ID3Tree()
+#
+#
+#         return node
 
 
-class ID3Tree: #/// thelei doyleia edw...///#
-    def create_tree(self, pos_dict, neg_dict, all_dic, d):
-        root = Node(None, 0, 0)
-        node = Node(neg, pos)
-        if len(all_dic) == 0:
-            node.result = 1 if len(pos) < len(neg) else -1
-            return node
-        elif len(pos) == 0 and len(neg) == 0:
-            node.result = d
-            return node
-        elif len(pos) == 0:
-            node.result = 1
-            return node
-        elif len(neg) == 0:
-            node.result = -1
-            return node
+class ID3:
+    def create(self, pos_dict, neg_dict, all_dict, d):
+        node = Node(pos_dict, neg_dict)
 
-        node.word = word
-        return node
+
+
+        if len(all_dict) == 0:
+            return
+
+        #find max gain
+        max = 0
+        maxWord = None
+        for word in all_dict.keys():
+            info = informationGain(word, pos_dict, neg_dict)
+            if info > max:
+                max = info
+                maxWord = word
+
+        temp_dict = all_dict
+        del temp_dict[maxWord]
+
+        node.value = maxWord
+
 
     def addNode(self, node, value):
         if (node.left == None):
@@ -174,22 +205,34 @@ def Classify(text):
     while currentNode.word is not None:
         result = currentNode.result
         if currentNode.word in text:
-            currentNode = currentNode.true
+            currentNode = currentNode.right
         else:
-            currentNode = currentNode.false
+            currentNode = currentNode.left
     return result
 
 
 if __name__ == '__main__':
     pos_dictionary = train("pos")
     neg_dictionary = train("neg")
-    all_dic = set()
-    for key in pos_dictionary.keys() :
-        all_dic.add(key)
-    for kei in neg_dictionary.keys():
-        all_dic.add(key)
+    # all_dict = set()
+    # all_dict = pos_dictionary.union(neg_dictionary)
+    # for key in pos_dictionary.keys():
+    #     all_dic.add(key)
+    # for kei in neg_dictionary.keys():
+    #     all_dic.add(key)
+    all_dict = pos_dictionary
+    for key, value in neg_dictionary.items():
+        if key in all_dict:
+            all_dict[key] += value
+        else:
+            all_dict[key] = value
 
-    root = None
+    del all_dict['']
+
+    for k in all_dict:
+        print(k)
+
+    root = ID3()
 
 
 
