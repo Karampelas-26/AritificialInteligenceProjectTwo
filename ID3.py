@@ -2,8 +2,9 @@ import os
 from numpy import log1p as log
 import numpy as np
 import pandas as pd
+import sklearn
 
-my_path = 'C:\\Users\\georg\OneDrive - aueb.gr\\artificial_intelligence\\assignment_2\\aclImdb'
+my_path = "C:\\Users\\User\\Desktop\\project2\\aclImdb"
 
 class Node:
     def __init__(self, pos_sum, neg_sum):
@@ -237,51 +238,70 @@ def ID3(pos_dict, neg_dict, all_dict, parent = None):
             # print(maxInfo)
             # print(all_dict)
             # print(all_dict[maxInfo])
-            best_word = all_dict[maxInfo] #i leksi me to megalutero IG
+            best_word = maxInfo #i leksi me to megalutero IG
             if best_word in pos_dict.keys() & neg_dict.keys():
                 parent_node = 1 if pos_dict[best_word] > neg_dict[best_word] else -1
             elif best_word not in pos_dict:
                 parent_node = -1
             else:
                 parent_node = 1
-
+            new_pos_dict = pos_dict
+            new_neg_dict = neg_dict
+            new_all_dict = all_dict
             # print(all_dict[best_word])
-            all_dict.pop(maxInfo)
+            new_all_dict.pop(maxInfo)
             if best_word in pos_dict:
-                pos_dict.pop(maxInfo)
+                new_pos_dict.pop(maxInfo)
             if best_word in neg_dict:
-                neg_dict.pop(maxInfo)
+                new_neg_dict.pop(maxInfo)
 
             tree = {best_word: {}}
 
-            subtree = ID3(pos_dict, neg_dict, all_dict, parent_node)
+            subtree = ID3(new_pos_dict, new_neg_dict, new_all_dict, parent_node)
 
             tree[best_word] = subtree
-            print('karkiiiiiiiiiiiiiiiiinossssssss')
             return tree
 
 def prediction(text, tree, default = 1):
-    for key in list(text.keys()):
-        if key in list(tree.keys()):
-
-            try:
-                result = tree[key][text.key]
-            except:
-                return default
-            if isinstance(result, dict):
-                return prediction(text, result)
+    result = default
+    subtree = None
+    for key in text:
+        for key in tree.keys():
+            #print(key)
+            subtree = tree[key]
+           # print(pos_dictionary)
+            if key in pos_dictionary.keys() & neg_dictionary:
+                if pos_dictionary[key] > neg_dictionary[key]:
+                    result = 1
+                elif neg_dictionary[key] > pos_dictionary[key]:
+                    result = -1
+                else:
+                    result = default
+            elif key not in pos_dictionary.keys():
+                result = -1
             else:
-                return result
+                result = 1
+       # except:
+           # return default
+        if isinstance(subtree, dict):
+            return prediction(text, subtree)
+        else:
+            return result
 
 def test(myfile):
     path = my_path + '\\test\\' + str(myfile)
-    i = 0
+    neg_result = pos_result  = 0
     for filename in os.listdir(path):
         with open(os.path.sep.join([path, filename]), encoding="utf8") as f:
             text = f.read()
             text = clean(text)
-            i += prediction(text, tree, 1)
-    return i
+            temp = prediction(text, tree, 1)
+            if temp == 1:
+                pos_result += 1
+            else:
+                neg_result += 1
+
+    return pos_result , neg_result
 
 
 # def Classify(text):
@@ -322,10 +342,11 @@ if __name__ == '__main__':
 
     tree = ID3(pos_dictionary, neg_dictionary, all_dict)
     print(tree)
-    pos = test('pos')
-    neg = test('neg')
-    print ("positive => "+pos)
-    print ("negative => "+neg)
+    pos1 , pos2 = test("pos")
+    neg1 , neg2 = test("neg")
+    print ("positive => "+str(pos1)+ " " +str(pos2))
+    print ("negative => "+str(neg1)+ " " + str(neg2))
+
 
 
 
