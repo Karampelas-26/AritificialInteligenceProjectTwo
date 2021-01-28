@@ -1,6 +1,7 @@
 import os
 import csv
 
+
 my_path = 'C:\\Users\\georg\\OneDrive - aueb.gr\\artificial_intelligence\\assignment_2\\aclImdb'
 
 def stop_words_to_list():
@@ -114,10 +115,11 @@ def test(file):
     strtext = 'For '+ str(file) +': pos==> '+str(sum_pos)+' and '+' neg==> '+str(sum_neg)
     print(strtext)
 
-
 if __name__ == '__main__':
     save('pos.csv', train('pos'))
     save('neg.csv', train('neg'))
     test('pos')
     test('neg')
+
+
 
